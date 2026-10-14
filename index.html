@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pensync - Smart Insulin Pen & Health Companion</title>
+  <meta name="description" content="Pensync medical portal for smart insulin pen monitoring, glucose tracking, and personalized clinician alerts.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       SCREEN 1: LOGIN & RECOVERY WINDOW
+       ========================================================================= -->
+  <section id="loginView" class="view-screen active" aria-label="Sign in to Pensync">
+    <div class="login-page-wrapper">
+      <div class="auth-card">
+        
+        <header class="auth-header">
+          <div class="auth-brand-logo">
+            <div class="brand-icon-circle" aria-hidden="true">
+              <!-- Smart Pen & Telemetry Pulse Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18"></path>
+                <path d="M2 2l7.586 7.586"></path>
+                <circle cx="11" cy="11" r="2"></circle>
+              </svg>
+            </div>
+            <h1 class="auth-title">Pensync</h1>
+          </div>
+          <p class="auth-subtitle">Patient & Clinician Connected Care Portal</p>
+        </header>
+
+        <!-- Login Form -->
+        <form id="loginForm" novalidate>
+          <div id="loginErrorAlert" class="badge badge-urgent" style="display:none; width:100%; padding:0.75rem; margin-bottom:1.25rem; text-transform:none; border-radius:6px; font-weight:600;" role="alert">
+          </div>
+
+          <div class="form-group">
+            <label for="usernameInput">Username</label>
+            <input 
+              type="text" 
+              id="usernameInput" 
+              name="username" 
+              placeholder="e.g. arthur.p" 
+              autocomplete="username" 
+              required
+            >
+            <span class="input-helper">Enter your registered patient username</span>
+          </div>
+
+          <div class="form-group">
+            <label for="passwordInput">Password</label>
+            <div class="password-input-group">
+              <input 
+                type="password" 
+                id="passwordInput" 
+                name="password" 
+                placeholder="Enter your password" 
+                autocomplete="current-password" 
+                required
+              >
+              <button 
+                type="button" 
+                id="toggleLoginPasswordBtn" 
+                class="password-toggle-btn" 
+                aria-label="Show password" 
+                aria-pressed="false"
+              >
+                <!-- Eye Icon -->
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+            <button type="button" id="forgotPasswordLink" class="btn-link">
+              Forgot password?
+            </button>
+          </div>
+
+          <div class="auth-actions">
+            <button type="submit" id="loginSubmitBtn" class="btn-primary" style="width: 100%;">
+              Sign In to Pensync
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick Demo Account Helper -->
+        <div class="demo-account-box" aria-label="Demo Testing Accounts">
+          <h4>Demo Patient Accounts (Click to test):</h4>
+          <div class="demo-btn-group">
+            <button type="button" class="demo-chip demo-fill-btn" data-username="arthur.p" data-password="insulin123">
+              Arthur Pendelton (Type 2)
+            </button>
+            <button type="button" class="demo-chip demo-fill-btn" data-username="martha.v" data-password="vital456">
+              Martha Vance (Type 1)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SCREEN 1B: FORGOT PASSWORD & RECOVERY FLOW
+       ========================================================================= -->
+  <section id="recoveryView" class="view-screen" aria-label="Pensync Password Recovery">
+    <div class="login-page-wrapper">
+      <div class="auth-card">
+        
+        <header class="auth-header">
+          <h1 class="auth-title" style="font-size: 28px;">Password Recovery</h1>
+          <p class="auth-subtitle">Verify your predetermined Recovery ID to set a new password</p>
+        </header>
+
+        <form id="recoveryForm" novalidate onsubmit="return false;">
+          <div id="recoveryErrorAlert" class="badge badge-urgent" style="display:none; width:100%; padding:0.75rem; margin-bottom:1.25rem; text-transform:none; border-radius:6px; font-weight:600;" role="alert">
+          </div>
+
+          <!-- Step 1: Enter Recovery ID -->
+          <div class="form-group">
+            <label for="recoveryIdInput">Predetermined Recovery ID</label>
+            <input 
+              type="text" 
+              id="recoveryIdInput" 
+              name="recoveryId" 
+              placeholder="e.g. PEN-9021" 
+              required
+            >
+            <span class="input-helper">Found on your physical PenSync packaging or patient ID card</span>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button type="button" id="verifyRecoveryBtn" class="btn-secondary" style="flex: 1;">
+              Verify Recovery ID
+            </button>
+            <button type="button" class="demo-chip demo-recovery-fill" data-recid="PEN-9021" title="Autofill Arthur's Recovery ID">
+              Fill ID: PEN-9021
+            </button>
+          </div>
+
+          <!-- Step 2: New Password (Revealed upon valid Recovery ID) -->
+          <div id="passwordResetFields" style="display: none; border-top: 2px solid var(--color-border); padding-top: 1.25rem; margin-top: 1.25rem;">
+            <div class="form-group">
+              <label for="newPasswordInput">New Password</label>
+              <div class="password-input-group">
+                <input 
+                  type="password" 
+                  id="newPasswordInput" 
+                  placeholder="Enter at least 4 characters" 
+                  required
+                >
+                <button 
+                  type="button" 
+                  id="toggleNewPasswordBtn" 
+                  class="password-toggle-btn" 
+                  aria-label="Show password" 
+                  aria-pressed="false"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPasswordInput">Confirm New Password</label>
+              <input 
+                type="password" 
+                id="confirmPasswordInput" 
+                placeholder="Re-enter new password" 
+                required
+              >
+            </div>
+
+            <button type="button" id="saveNewPasswordBtn" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+              Save New Password & Continue
+            </button>
+          </div>
+
+          <div style="margin-top: 1.5rem; text-align: center;">
+            <button type="button" id="backToLoginBtn" class="btn-outline" style="width: 100%;">
+              ← Return to Login
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SCREEN 2: MAIN DASHBOARD & PATIENT PORTAL (AFTER LOGIN)
+       ========================================================================= -->
+  <section id="dashboardView" class="view-screen" aria-label="Pensync Patient Dashboard">
+    <div class="app-container">
+      
+      <!-- Top Navigation Bar -->
+      <header class="app-topbar">
+        <div class="topbar-brand">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18"></path>
+            <path d="M2 2l7.586 7.586"></path>
+            <circle cx="11" cy="11" r="2"></circle>
+          </svg>
+          <span>Pensync</span>
+        </div>
+
+        <!-- Telemetry Status Distinction (Rule: clearly distinguish simulated from manual) -->
+        <div class="device-stream-badge" title="Active continuous connection to smart insulin pen">
+          <span class="stream-pulse-dot" aria-hidden="true"></span>
+          <span>Simulated PenSync Device Stream: Connected</span>
+        </div>
+
+        <div class="topbar-user-menu">
+          <button type="button" id="logoutBtn" class="btn-outline" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.4);">
+            Sign Out
+          </button>
+        </div>
+      </header>
+
+      <!-- Profile Banner with Mountain Image & Patient Details -->
+      <header class="profile-banner-card" role="banner">
+        <div class="banner-visual-strip">
+          <img src="assets/mountain_banner.jpg" alt="Tranquil panoramic mountain landscape with morning sunlight and misty pine valleys">
+        </div>
+        
+        <div class="banner-content-row">
+          <!-- Patient Profile Info -->
+          <div class="patient-info-block">
+            <div class="patient-avatar-box" id="patientAvatarDisplay" aria-hidden="true">
+              AP
+            </div>
+            <div class="patient-details">
+              <h2 id="patientNameDisplay">Arthur Pendelton</h2>
+              <div class="patient-meta-list" id="patientMetaDisplay">
+                <span class="patient-meta-item"><strong>Age:</strong> 68</span>
+                <span class="patient-meta-item">|</span>
+                <span class="patient-meta-item"><strong>Condition:</strong> Type 2 Diabetes</span>
+                <span class="patient-meta-item">|</span>
+                <span class="patient-meta-item"><strong>Device:</strong> PenSync Duo Pro #SN-8820</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Motivational Motto Widget -->
+          <div class="motto-banner-box" role="complementary" aria-label="Health Motto">
+            <div class="motto-heading">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#087E8B" stroke-width="2.5" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              YOUR HEALTH YOUR CONTROL
+            </div>
+            <p class="motto-quote">
+              "Small consistent steps protect your everyday vitality and independence."
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Emergency / Attention Alert Window (Tied to configured clinical rules) -->
+      <section id="attentionCard" class="attention-window-card severity-warning" role="alert" aria-live="polite">
+        <div class="attention-icon-wrapper" aria-hidden="true">
+          <!-- Bell / Notice Alert Icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+
+        <div class="attention-body">
+          <div class="attention-header-line">
+            <span id="attentionBadge" class="badge badge-warning">[ATTENTION REQUIRED]</span>
+            <h3 id="attentionTitle" class="attention-title">Scheduled Lunchtime Bolus Pending</h3>
+          </div>
+          <p id="attentionDesc" class="attention-desc">
+            Scheduled at 12:30 PM — 8 Units Rapid-Acting Insulin (Humalog). Please check your glucose before administering.
+          </p>
+          <div id="attentionMeta" class="attention-meta-info">
+            <span><strong>Rule Source:</strong> Configured Schedule Rule #BL-1230</span>
+            <span>•</span>
+            <span><strong>Status:</strong> Simulated Pen Telemetry</span>
+          </div>
+        </div>
+
+        <div class="attention-actions-group">
+          <button type="button" id="attentionActionPrimary" class="btn-primary">
+            Confirm Dose Taken (8 Units)
+          </button>
+          <button type="button" id="attentionActionSecondary" class="btn-outline">
+            Log Manual Fingerstick
+          </button>
+        </div>
+      </section>
+
+      <!-- Main Workspace Grid: Side Dashboard + Tab Views -->
+      <div class="dashboard-workspace-grid">
+        
+        <!-- Left Sidebar Dashboard Menu -->
+        <nav class="sidebar-navigation-panel" aria-label="Patient Dashboard Menu">
+          <h3 class="sidebar-heading">Patient Dashboard</h3>
+          <ul class="nav-menu-list" role="tablist">
+            
+            <li role="presentation">
+              <button type="button" class="nav-menu-btn active" data-tab="latest-glucose" role="tab" aria-selected="true" id="tab-btn-latest-glucose" aria-controls="tab-latest-glucose">
+                <span class="nav-item-num">1</span>
+                <!-- Glucose Drop Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+                <span>Latest blood sugar</span>
+              </button>
+            </li>
+
+            <li role="presentation">
+              <button type="button" class="nav-menu-btn" data-tab="insulin-log" role="tab" aria-selected="false" id="tab-btn-insulin-log" aria-controls="tab-insulin-log">
+                <span class="nav-item-num">2</span>
+                <!-- Insulin Syringe / Pen Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M18 2l4 4-10 10-4-4L18 2z"></path>
+                  <path d="M7 13l-4 4"></path>
+                  <path d="M3 17l4 4"></path>
+                  <line x1="2" y1="22" x2="6" y2="18"></line>
+                </svg>
+                <span>Insulin log</span>
+              </button>
+            </li>
+
+            <li role="presentation">
+              <button type="button" class="nav-menu-btn" data-tab="reminders" role="tab" aria-selected="false" id="tab-btn-reminders" aria-controls="tab-reminders">
+                <span class="nav-item-num">3</span>
+                <!-- Bell / Clock Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Reminders</span>
+              </button>
+            </li>
+
+            <li role="presentation">
+              <button type="button" class="nav-menu-btn" data-tab="my-report" role="tab" aria-selected="false" id="tab-btn-my-report" aria-controls="tab-my-report">
+                <span class="nav-item-num">4</span>
+                <!-- Clinical Report Chart Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>My report</span>
+              </button>
+            </li>
+
+            <li role="presentation">
+              <button type="button" class="nav-menu-btn" data-tab="sync-status" role="tab" aria-selected="false" id="tab-btn-sync-status" aria-controls="tab-sync-status">
+                <span class="nav-item-num">5</span>
+                <!-- Radio Wave / Sync Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+                </svg>
+                <span>Sync status</span>
+              </button>
+            </li>
+
+          </ul>
+        </nav>
+
+        <!-- Right Side Tab Content Views -->
+        <main class="dashboard-content-area">
+
+          <!-- TAB 1: LATEST BLOOD SUGAR (User instructed: keep as blank "") -->
+          <article id="tab-latest-glucose" class="tab-window-card active" role="tabpanel" aria-labelledby="tab-btn-latest-glucose">
+            <header class="tab-window-header">
+              <div>
+                <h3 class="tab-window-title">Latest Blood Sugar</h3>
+                <p class="tab-window-subhead">Continuous device stream & manual fingerstick readings</p>
+              </div>
+              <span class="badge badge-info">Window Active</span>
+            </header>
+
+            <div class="designated-blank-state" aria-label="Designated blank container">
+              <div class="blank-icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+              </div>
+              <h3>Latest blood sugar</h3>
+              <p>Container ready for incoming glucose stream data.</p>
+            </div>
+          </article>
+
+          <!-- TAB 2: INSULIN LOG (User instructed: keep as blank "") -->
+          <article id="tab-insulin-log" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-insulin-log">
+            <header class="tab-window-header">
+              <div>
+                <h3 class="tab-window-title">Insulin Log</h3>
+                <p class="tab-window-subhead">Digital pen injection history, basal units, and rapid bolus events</p>
+              </div>
+              <span class="badge badge-info">Window Active</span>
+            </header>
+
+            <div class="designated-blank-state" aria-label="Designated blank container">
+              <div class="blank-icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 2l4 4-10 10-4-4L18 2z"></path>
+                  <path d="M7 13l-4 4"></path>
+                  <path d="M3 17l4 4"></path>
+                </svg>
+              </div>
+              <h3>Insulin log</h3>
+              <p>Container ready for incoming insulin dose log entries.</p>
+            </div>
+          </article>
+
+          <!-- TAB 3: REMINDERS & DOCTOR'S ALERTS -->
+          <article id="tab-reminders" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-reminders">
+            <header class="tab-window-header">
+              <div>
+                <h3 class="tab-window-title">Reminders & Clinical Messages</h3>
+                <p class="tab-window-subhead">Daily insulin schedule, endocrinologist advisories, and alert history</p>
+              </div>
+              <span class="badge badge-ok">[SCHEDULE SYNCHRONIZED]</span>
+            </header>
+
+            <!-- 1. Insulin Reminders Section -->
+            <section class="reminders-section-group" aria-labelledby="remindersScheduleTitle">
+              <h4 id="remindersScheduleTitle" class="reminders-section-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Today's Insulin Schedule
+              </h4>
+              <div id="insulinRemindersList" class="reminders-grid">
+                <!-- Rendered dynamically by app.js -->
+              </div>
+            </section>
+
+            <!-- 2. Doctor Alert Messages Section -->
+            <section class="reminders-section-group" aria-labelledby="doctorAlertsTitle">
+              <h4 id="doctorAlertsTitle" class="reminders-section-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#087E8B" stroke-width="2.2" aria-hidden="true">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                Alert Messages from Doctors
+              </h4>
+              <div id="doctorAlertsList">
+                <!-- Rendered dynamically by app.js -->
+              </div>
+            </section>
+
+            <!-- 3. Past Messages Section inside Reminder Page -->
+            <section class="past-messages-container" aria-labelledby="pastMessagesTitle">
+              <h4 id="pastMessagesTitle" class="reminders-section-title" style="font-size: 18px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334D64" stroke-width="2.2" aria-hidden="true">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                Past Alert Messages Archive
+              </h4>
+              <div id="pastMessagesList">
+                <!-- Rendered dynamically by app.js -->
+              </div>
+            </section>
+          </article>
+
+          <!-- TAB 4: MY REPORT (CONCISE CONCLUSION & READABLE CHARTS) -->
+          <article id="tab-my-report" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-my-report">
+            <header class="tab-window-header">
+              <div>
+                <h3 class="tab-window-title">My Report</h3>
+                <p class="tab-window-subhead">7-day retrospective analytics, Time-in-Range, and clinical stability metrics</p>
+              </div>
+              <span class="badge badge-ok">[7-DAY REPORT COMPILED]</span>
+            </header>
+
+            <!-- Concise Clinical Conclusion -->
+            <section class="report-summary-box" aria-labelledby="reportConclusionHeading">
+              <h4 id="reportConclusionHeading" class="report-summary-heading">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.2" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Concise Clinical Conclusion
+              </h4>
+              <p id="reportConclusionText" class="report-summary-text">
+                Loading clinical evaluation summary...
+              </p>
+            </section>
+
+            <!-- Key Metrics Grid -->
+            <div class="report-metrics-grid">
+              
+              <div class="metric-card">
+                <span class="metric-label">7-Day Average Glucose</span>
+                <div id="metricAvgGlucose" class="metric-value-huge status-ok">126 mg/dL</div>
+                <span class="metric-context badge badge-ok">[IN-RANGE: 70-140 mg/dL]</span>
+              </div>
+
+              <div class="metric-card">
+                <span class="metric-label">Estimated HbA1c</span>
+                <div id="metricHba1c" class="metric-value-huge status-ok">6.2%</div>
+                <span class="metric-context badge badge-ok">[TARGET &lt; 7.0%]</span>
+              </div>
+
+              <div class="metric-card">
+                <span class="metric-label">Time in Range (TIR)</span>
+                <div id="metricTir" class="metric-value-huge status-ok">82%</div>
+                <span class="metric-context badge badge-ok">[CLINICAL GOAL &gt; 70%]</span>
+              </div>
+
+              <div class="metric-card">
+                <span class="metric-label">Pen Adherence Doses</span>
+                <div id="metricDoses" class="metric-value-huge" style="color:var(--color-insulin);">21 / 21</div>
+                <span class="metric-context badge badge-insulin">[100% TIMELY BOLUS]</span>
+              </div>
+
+            </div>
+
+            <!-- Simple, Clean Graphs with Strict Harmonious Color Palette -->
+            <div class="report-charts-grid">
+              
+              <!-- 7-Day Glucose Trend Line Chart -->
+              <div class="chart-panel-card">
+                <div class="chart-panel-header">
+                  <h4 class="chart-panel-title">7-Day Continuous Glucose Trend (mg/dL)</h4>
+                  <div class="chart-legend-row">
+                    <span class="legend-item">
+                      <span class="legend-swatch" style="background:#237A57;"></span>
+                      Target Band (70-140)
+                    </span>
+                    <span class="legend-item">
+                      <span class="legend-swatch" style="background:#16324F;"></span>
+                      Glucose Curve
+                    </span>
+                    <span class="legend-item">
+                      <span class="legend-swatch" style="background:#5B4B8A;"></span>
+                      Insulin Dose Event
+                    </span>
+                  </div>
+                </div>
+                <div class="canvas-container">
+                  <canvas id="glucoseTrendCanvas" aria-label="7-day glucose curve showing normal target band and insulin events" role="img"></canvas>
+                </div>
+              </div>
+
+              <!-- Time-in-Range Distribution Donut Chart -->
+              <div class="chart-panel-card">
+                <div class="chart-panel-header">
+                  <h4 class="chart-panel-title">Time in Target Range</h4>
+                </div>
+                <div class="canvas-container" style="height: 200px;">
+                  <canvas id="tirDonutCanvas" aria-label="Time in target range breakdown" role="img"></canvas>
+                </div>
+                <div class="chart-legend-row" style="margin-top: 1rem; justify-content: center;">
+                  <span class="legend-item">
+                    <span class="legend-swatch" style="background:#237A57;"></span>
+                    Target (82%)
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-swatch" style="background:#9A5B00;"></span>
+                    Above (14%)
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-swatch" style="background:#B42318;"></span>
+                    Below (4%)
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Footer Action Bar -->
+            <footer class="report-footer-actions">
+              <button type="button" id="printReportBtn" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print / Save Clinical Report
+              </button>
+            </footer>
+          </article>
+
+          <!-- TAB 5: SYNC STATUS (User instructed: keep as blank "") -->
+          <article id="tab-sync-status" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-sync-status">
+            <header class="tab-window-header">
+              <div>
+                <h3 class="tab-window-title">Sync Status</h3>
+                <p class="tab-window-subhead">Bluetooth smart pen telemetry, pairing diagnostics, and packet verification</p>
+              </div>
+              <span class="badge badge-info">Window Active</span>
+            </header>
+
+            <div class="designated-blank-state" aria-label="Designated blank container">
+              <div class="blank-icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+                </svg>
+              </div>
+              <h3>Sync status</h3>
+              <p>Container ready for incoming device telemetry sync records.</p>
+            </div>
+          </article>
+
+        </main>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Global Feedback Toast Notification -->
+  <aside id="toastBanner" class="toast-banner" role="status" aria-live="polite">
+    <div id="toastMessage" style="font-size: 16px; font-weight: 600;">Welcome to Pensync</div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
