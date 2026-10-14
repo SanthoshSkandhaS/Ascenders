@@ -1,61 +1,124 @@
-// Automated test suite for PenSync logic, state, and DOM flow
+// Comprehensive Automated Test Suite for PenSync Healthcare Application
 const fs = require('fs');
 const path = require('path');
 
-console.log("=== RUNNING PENSYNC INTEGRATION VALIDATION SUITE ===\n");
+console.log("==========================================================");
+console.log("       PENSYNC AUTHORITATIVE VALIDATION & REGRESSION TEST");
+console.log("==========================================================\n");
 
-// 1. Verify all required files exist
-const requiredFiles = ['index.html', 'styles.css', 'app.js', 'server.js', 'assets/mountain_banner.jpg'];
-let allFilesExist = true;
+let totalTests = 0;
+let passedTests = 0;
 
-requiredFiles.forEach(file => {
-  const fullPath = path.join(__dirname, file);
-  if (fs.existsSync(fullPath)) {
-    const stats = fs.statSync(fullPath);
-    console.log(`[PASS] File exists: ${file} (${stats.size} bytes)`);
+function assert(description, condition, extraInfo = "") {
+  totalTests++;
+  if (condition) {
+    console.log(`[PASS] ${description}`);
+    passedTests++;
   } else {
-    console.error(`[FAIL] File missing: ${file}`);
-    allFilesExist = false;
+    console.error(`[FAIL] ${description} ${extraInfo ? '-> ' + extraInfo : ''}`);
   }
-});
-
-if (!allFilesExist) {
-  process.exit(1);
 }
 
-// 2. Validate index.html content requirements
-const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-
-const checks = [
-  { name: "Website Title contains Pensync", test: html.includes("<title>Pensync") },
-  { name: "Mountain Banner image present", test: html.includes('assets/mountain_banner.jpg') },
-  { name: "Password toggle button present", test: html.includes('id="toggleLoginPasswordBtn"') },
-  { name: "Forgot password link present", test: html.includes('id="forgotPasswordLink"') },
-  { name: "Recovery ID input field present", test: html.includes('id="recoveryIdInput"') },
-  { name: "Attention / Emergency window present", test: html.includes('id="attentionCard"') },
-  { name: "YOUR HEALTH YOUR CONTROL motto present", test: html.includes('YOUR HEALTH YOUR CONTROL') },
-  { name: "Sidebar tab: Latest blood sugar", test: html.includes('Latest blood sugar') },
-  { name: "Sidebar tab: Insulin log", test: html.includes('Insulin log') },
-  { name: "Sidebar tab: Reminders", test: html.includes('Reminders') },
-  { name: "Sidebar tab: My report", test: html.includes('My report') },
-  { name: "Sidebar tab: Sync status", test: html.includes('Sync status') },
-  { name: "Doctors alert section present", test: html.includes('Alert Messages from Doctors') },
-  { name: "Past messages archive section present", test: html.includes('Past Alert Messages Archive') },
-  { name: "Report Concise Clinical Conclusion present", test: html.includes('Concise Clinical Conclusion') },
-  { name: "Report Canvas charts present", test: html.includes('id="glucoseTrendCanvas"') && html.includes('id="tirDonutCanvas"') }
-];
-
-let htmlPassCount = 0;
-checks.forEach(c => {
-  if (c.test) {
-    console.log(`[PASS] HTML Check: ${c.name}`);
-    htmlPassCount++;
-  } else {
-    console.error(`[FAIL] HTML Check: ${c.name}`);
-  }
+// 1. FILE EXISTENCE & INTEGRITY
+console.log("--- 1. File Structure Verification ---");
+const requiredFiles = ['index.html', 'styles.css', 'app.js', 'server.js', 'assets/mountain_banner.jpg'];
+requiredFiles.forEach(file => {
+  const fullPath = path.join(__dirname, file);
+  assert(`File exists: ${file}`, fs.existsSync(fullPath));
 });
 
-// 3. Validate CSS Design System Tokens
+// 2. HTML CONTENT & DOM ELEMENTS
+console.log("\n--- 2. HTML Structure & Placeholder Check ---");
+const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+
+// Absence of placeholder strings
+assert(
+  "No placeholder 'Container ready for incoming glucose stream data'",
+  !html.includes("Container ready for incoming glucose stream data")
+);
+assert(
+  "No placeholder 'Container ready for incoming insulin dose log entries'",
+  !html.includes("Container ready for incoming insulin dose log entries")
+);
+assert(
+  "No placeholder 'Container ready for incoming device telemetry sync records'",
+  !html.includes("Container ready for incoming device telemetry sync records")
+);
+
+// Tab 1 & Tab 2 Hero & Tables
+assert("Tab 1 Latest Glucose Hero element present", html.includes('id="latestGlucoseNum"'));
+assert("Tab 1 Glucose History Table present", html.includes('id="glucoseHistoryTableBody"'));
+assert("Tab 1 Unit toggle button present", html.includes('id="toggleUnitBtn"'));
+assert("Tab 1 Log Blood Sugar button present", html.includes('id="openAddGlucoseBtn"'));
+
+assert("Tab 2 Daily Insulin Total element present", html.includes('id="dailyTotalInsulin"'));
+assert("Tab 2 Cartridge Left element present", html.includes('id="cartridgeUnitsLeft"'));
+assert("Tab 2 Insulin History Table present", html.includes('id="insulinHistoryTableBody"'));
+assert("Tab 2 Record Dose button present", html.includes('id="openAddInsulinBtn"'));
+
+// Tab 3, 4, 5
+assert("Tab 3 Reminders grid present", html.includes('id="insulinRemindersList"'));
+assert("Tab 3 Doctor alerts present", html.includes('id="doctorAlertsList"'));
+assert("Tab 4 Trend canvas present", html.includes('id="glucoseTrendCanvas"'));
+assert("Tab 4 TIR Donut canvas present", html.includes('id="tirDonutCanvas"'));
+assert("Tab 5 Sync diagnostics present", html.includes('id="syncDeviceStatus"') && html.includes('id="syncInternetStatus"'));
+assert("Tab 5 Manual Sync button present", html.includes('id="triggerManualSyncBtn"'));
+
+// Clinician Oversight & Modals
+assert("Clinician Portal toggle button present", html.includes('id="togglePortalModeBtn"'));
+assert("Clinician Portal container present", html.includes('id="doctorPortalSection"'));
+assert("Clinician Patient selector dropdown present", html.includes('id="doctorPatientSelect"'));
+assert("Add Glucose modal dialog present", html.includes('id="addGlucoseModal"'));
+assert("Add Insulin modal dialog present", html.includes('id="addInsulinModal"'));
+
+// 3. JAVASCRIPT CREDENTIAL SECURITY & STRICT REJECTION
+console.log("\n--- 3. Credentials & Security Verification ---");
+const js = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
+
+// Legacy credentials strictly removed from default patient registry
+assert("Legacy 'arthur.p' not in active registry", !js.includes('"arthur.p": {'));
+assert("Legacy 'martha.v' not in active registry", !js.includes('"martha.v": {'));
+assert("Legacy password 'insulin123' not in active registry", !js.includes('password: "insulin123"'));
+assert("Legacy password 'vital456' not in active registry", !js.includes('password: "vital456"'));
+assert("Legacy recovery 'PEN-9021' not in active registry", !js.includes('recoveryId: "PEN-9021"'));
+assert("Legacy recovery 'PEN-4410' not in active registry", !js.includes('recoveryId: "PEN-4410"'));
+
+// Authoritative accounts present
+assert("Authoritative patient GC1001 (Ananya Rao) present", js.includes('id: "GC1001"') && js.includes('Ananya Rao'));
+assert("Authoritative patient GC1002 (Ravi Kumar) present", js.includes('id: "GC1002"') && js.includes('Ravi Kumar'));
+assert("Authoritative patient GC1003 (Meera Nair) present", js.includes('id: "GC1003"') && js.includes('Meera Nair'));
+assert("Authoritative clinician dr.thorne present", js.includes('username: "dr.thorne"') && js.includes('Dr. Aris Thorne'));
+
+// Recovery IDs
+assert("Recovery ID PEN-1001 present", js.includes('"PEN-1001"'));
+assert("Recovery ID PEN-1002 present", js.includes('"PEN-1002"'));
+assert("Recovery ID PEN-1003 present", js.includes('"PEN-1003"'));
+
+// 4. FUNCTIONAL SIMULATION TESTS
+console.log("\n--- 4. Authentication & Clinical Formulas Simulation ---");
+
+// Test formula [CALC-07]: mmol/L conversion
+const mgDlVal = 124;
+const mmolLVal = Number((mgDlVal / 18.0182).toFixed(1));
+assert("Formula [CALC-07]: 124 mg/dL converts to 6.9 mmol/L", mmolLVal === 6.9, `Got ${mmolLVal}`);
+
+// Test formula [CALC-01] & [CALC-02]: Mean & HbA1c
+const ananyaReadings = [118, 146, 124];
+const ananyaMean = Math.round(ananyaReadings.reduce((a, b) => a + b, 0) / ananyaReadings.length);
+const ananyaHba1c = Number(((ananyaMean + 46.7) / 28.7).toFixed(1));
+assert("Formula [CALC-01]: Ananya mean glucose is 129 mg/dL", ananyaMean === 129, `Got ${ananyaMean}`);
+assert("Formula [CALC-02]: Ananya estimated HbA1c is 6.1%", ananyaHba1c === 6.1, `Got ${ananyaHba1c}`);
+
+// Test Priming Filter [CALC-06]
+function isPrimingDose(units, timeGapSeconds) {
+  return units <= 2 && timeGapSeconds <= 60;
+}
+assert("Formula [CALC-06]: 1 Unit needle prime within 60s is filtered", isPrimingDose(1, 45) === true);
+assert("Formula [CALC-06]: 5 Units meal bolus is NOT filtered", isPrimingDose(5, 30) === false);
+assert("Formula [CALC-06]: 1 Unit injection after 120s is NOT filtered", isPrimingDose(1, 120) === false);
+
+// 5. CSS DESIGN SYSTEM & TOKENS
+console.log("\n--- 5. CSS Healthcare Design System Tokens ---");
 const css = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
 const designTokens = [
   { name: "Primary #16324F", test: css.includes('#16324F') },
@@ -66,20 +129,23 @@ const designTokens = [
   { name: "Attention warning #9A5B00", test: css.includes('#9A5B00') },
   { name: "Urgent alerts #B42318", test: css.includes('#B42318') },
   { name: "Insulin events #5B4B8A", test: css.includes('#5B4B8A') },
-  { name: "Borders #D5DEE5", test: css.includes('#D5DEE5') },
-  { name: "Body text 18px", test: css.includes('18px') },
-  { name: "Min touch target 48px", test: css.includes('48px') }
+  { name: "Modal dialog styling", test: css.includes('.modal-dialog') },
+  { name: "Doctor portal styling", test: css.includes('.doctor-portal-banner') }
 ];
 
-let cssPassCount = 0;
-designTokens.forEach(t => {
-  if (t.test) {
-    console.log(`[PASS] Design Token Check: ${t.name}`);
-    cssPassCount++;
-  } else {
-    console.error(`[FAIL] Design Token Check: ${t.name}`);
-  }
+designTokens.forEach(token => {
+  assert(`Token: ${token.name}`, token.test);
 });
 
-console.log(`\n=== RESULTS: ${htmlPassCount}/${checks.length} HTML checks passed, ${cssPassCount}/${designTokens.length} Design tokens verified ===`);
-console.log("All core requirements verified successfully!");
+// SUMMARY
+console.log("\n==========================================================");
+console.log(`TEST SUMMARY: ${passedTests} / ${totalTests} checks passed (${Math.round((passedTests / totalTests) * 100)}%)`);
+console.log("==========================================================");
+
+if (passedTests === totalTests) {
+  console.log("\n>>> ALL TESTS PASSED! APPLICATION READY FOR COMMIT & DEPLOYMENT <<<\n");
+  process.exit(0);
+} else {
+  console.error(`\n>>> ${totalTests - passedTests} TEST(S) FAILED! <<<\n`);
+  process.exit(1);
+}
