@@ -1,0 +1,22 @@
+{
+  "name": "pensync",
+  "version": "1.0.0",
+  "description": "PenSync - Smart Insulin Pen & Glucose Companion",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_pensync.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "medtech",
+    "diabetes",
+    "insulin",
+    "cgm",
+    "pensync"
+  ],
+  "author": "Ascenders",
+  "license": "MIT"
+}
