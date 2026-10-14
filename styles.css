@@ -1566,6 +1566,194 @@ select:focus {
   border-color: var(--color-status-urgent);
 }
 
+/* CLINICAL TRIAGE & ML PRIORITIZATION QUEUE STYLES */
+.triage-queue-card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.triage-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.triage-title-group h3 {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin: 0 0 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.triage-title-group p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.triage-filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.triage-filter-btn {
+  background: #F0F4F8;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-dark);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.triage-filter-btn:hover {
+  background: #E2E8F0;
+  border-color: var(--color-accent);
+}
+
+.triage-filter-btn.active {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.triage-filter-badge {
+  background: rgba(0, 0, 0, 0.12);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.triage-filter-btn.active .triage-filter-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.triage-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.triage-table th {
+  background: #F0F4F8;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--color-border);
+  text-align: left;
+}
+
+.triage-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  font-size: var(--font-size-sm);
+}
+
+.triage-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.triage-row:hover {
+  background-color: #F8FAFC;
+}
+
+.triage-row.selected {
+  background-color: #EDF6F9;
+  border-left: 4px solid var(--color-accent);
+}
+
+.triage-rank-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--font-size-sm);
+}
+
+.triage-rank-badge.tier-critical {
+  background: #FDE8E8;
+  color: var(--color-status-urgent);
+  border: 2px solid var(--color-status-urgent);
+}
+
+.triage-rank-badge.tier-elevated {
+  background: #FEF3C7;
+  color: var(--color-status-warning);
+  border: 2px solid var(--color-status-warning);
+}
+
+.triage-rank-badge.tier-stable {
+  background: #DEF7EC;
+  color: var(--color-status-ok);
+  border: 2px solid var(--color-status-ok);
+}
+
+.ml-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.ml-score-pill.score-high {
+  background: #FEF2F2;
+  color: var(--color-status-urgent);
+  border: 1px solid var(--color-status-urgent);
+}
+
+.ml-score-pill.score-med {
+  background: #FFFBEB;
+  color: var(--color-status-warning);
+  border: 1px solid var(--color-status-warning);
+}
+
+.ml-score-pill.score-low {
+  background: #F0FDF4;
+  color: var(--color-status-ok);
+  border: 1px solid var(--color-status-ok);
+}
+
+.safety-notice-banner {
+  background: #F8FAFC;
+  border-left: 4px solid var(--color-accent);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-top: 1rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
 /* High contrast print styles for clinical export */
 @media print {
   body {
