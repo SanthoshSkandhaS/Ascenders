@@ -92,13 +92,19 @@
 
         <!-- Quick Demo Account Helper -->
         <div class="demo-account-box" aria-label="Demo Testing Accounts">
-          <h4>Demo Patient Accounts (Click to test):</h4>
-          <div class="demo-btn-group">
-            <button type="button" class="demo-chip demo-fill-btn" data-username="arthur.p" data-password="insulin123">
-              Arthur Pendelton (Type 2)
+          <h4>Demo Accounts (Click to test):</h4>
+          <div class="demo-btn-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button type="button" class="demo-chip demo-fill-btn" data-username="gc1001" data-password="pensync123" title="Ananya Rao - Type 2 Diabetes">
+              <strong>Ananya Rao (GC1001)</strong> — Type 2 Diabetes
             </button>
-            <button type="button" class="demo-chip demo-fill-btn" data-username="martha.v" data-password="vital456">
-              Martha Vance (Type 1)
+            <button type="button" class="demo-chip demo-fill-btn" data-username="gc1002" data-password="pensync123" title="Ravi Kumar - Demo High Alert">
+              <strong>Ravi Kumar (GC1002)</strong> — High Alert Scenario (236 mg/dL)
+            </button>
+            <button type="button" class="demo-chip demo-fill-btn" data-username="gc1003" data-password="pensync123" title="Meera Nair - CGM Low Alert">
+              <strong>Meera Nair (GC1003)</strong> — Type 1 CGM Low Alert (68 mg/dL)
+            </button>
+            <button type="button" class="demo-chip demo-fill-btn" data-username="dr.thorne" data-password="clinical123" style="background:#16324F; color:#FFFFFF; border-color:#087E8B;" title="Dr. Aris Thorne - Clinician Portal">
+              🩺 <strong>Dr. Aris Thorne, MD</strong> — Clinician Telemetry Portal
             </button>
           </div>
         </div>
@@ -130,18 +136,24 @@
               type="text" 
               id="recoveryIdInput" 
               name="recoveryId" 
-              placeholder="e.g. PEN-9021" 
+              placeholder="e.g. PEN-1001" 
               required
             >
             <span class="input-helper">Found on your physical PenSync packaging or patient ID card</span>
           </div>
 
-          <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            <button type="button" id="verifyRecoveryBtn" class="btn-secondary" style="flex: 1;">
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button type="button" id="verifyRecoveryBtn" class="btn-secondary" style="flex: 1 1 100%;">
               Verify Recovery ID
             </button>
-            <button type="button" class="demo-chip demo-recovery-fill" data-recid="PEN-9021" title="Autofill Arthur's Recovery ID">
-              Fill ID: PEN-9021
+            <button type="button" class="demo-chip demo-recovery-fill" data-recid="PEN-1001" title="Autofill Ananya's Recovery ID">
+              Fill: PEN-1001
+            </button>
+            <button type="button" class="demo-chip demo-recovery-fill" data-recid="PEN-1002" title="Autofill Ravi's Recovery ID">
+              Fill: PEN-1002
+            </button>
+            <button type="button" class="demo-chip demo-recovery-fill" data-recid="PEN-1003" title="Autofill Meera's Recovery ID">
+              Fill: PEN-1003
             </button>
           </div>
 
@@ -222,11 +234,74 @@
         </div>
 
         <div class="topbar-user-menu">
+          <button type="button" id="togglePortalModeBtn" class="btn-outline" style="background: rgba(8,126,139,0.3); color:#FFFFFF; border-color:#087E8B; font-weight:700;">
+            🩺 Clinician View
+          </button>
           <button type="button" id="logoutBtn" class="btn-outline" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.4);">
             Sign Out
           </button>
         </div>
       </header>
+
+      <!-- Clinician / Doctor Portal Banner & Controls (Shown when Clinician View is active or doctor logged in) -->
+      <section id="doctorPortalSection" class="doctor-portal-banner" style="display: none;" aria-label="Clinician Oversight Portal">
+        <div style="flex: 1; min-width: 280px;">
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+            <span class="badge badge-info" style="background:#087E8B; color:#FFFFFF;">CLINICIAN OVERSIGHT</span>
+            <span style="font-size:var(--font-size-sm); color:#D5DEE5;">Dr. Aris Thorne, MD • Lead Endocrinologist</span>
+          </div>
+          <h2 style="color:#FFFFFF; margin:0; font-size:var(--font-size-xl);">PenSync Multi-Patient Clinical Dashboard</h2>
+        </div>
+
+        <div style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
+          <div>
+            <label for="doctorPatientSelect" class="doctor-select-label">Select Patient Case Record:</label>
+            <select id="doctorPatientSelect" class="doctor-patient-picker">
+              <option value="gc1001">Ananya Rao (GC1001) - T2D / Target Review</option>
+              <option value="gc1002">Ravi Kumar (GC1002) - T2D / Demo High Alert</option>
+              <option value="gc1003">Meera Nair (GC1003) - T1D / Demo Low Alert</option>
+            </select>
+          </div>
+          <button type="button" id="exitDoctorPortalBtn" class="btn-outline" style="border-color:#FFFFFF; color:#FFFFFF;">
+            Switch to Patient Mode
+          </button>
+        </div>
+      </section>
+
+      <!-- Clinician KPI Summary Grid (Visible in Clinician View) -->
+      <div id="doctorKpiSection" style="display: none;">
+        <div id="doctorAlertBox" class="crossref-alert-box">
+          <!-- Dynamically populated cross-reference clinical alert -->
+        </div>
+
+        <div class="doctor-kpi-grid">
+          <div class="doctor-kpi-card">
+            <span class="kpi-label">Active Patient ID</span>
+            <div id="doctorKpiId" class="kpi-val">GC1001</div>
+            <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Verified Demo Profile</span>
+          </div>
+          <div class="doctor-kpi-card">
+            <span class="kpi-label">Latest Blood Sugar</span>
+            <div id="doctorKpiSugar" class="kpi-val">124 mg/dL</div>
+            <span id="doctorKpiSugarZone" class="badge badge-ok">In Target</span>
+          </div>
+          <div class="doctor-kpi-card">
+            <span class="kpi-label">7-Day Mean Glucose</span>
+            <div id="doctorKpiMean" class="kpi-val">129 mg/dL</div>
+            <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Formula [CALC-01]</span>
+          </div>
+          <div class="doctor-kpi-card">
+            <span class="kpi-label">Time in Range (TIR)</span>
+            <div id="doctorKpiTir" class="kpi-val" style="color:var(--color-status-ok);">100%</div>
+            <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Target Band: 70–140</span>
+          </div>
+          <div class="doctor-kpi-card">
+            <span class="kpi-label">Prescribed Basal Regimen</span>
+            <div id="doctorKpiBasal" class="kpi-val" style="font-size:22px; color:var(--color-insulin);">20 U/day</div>
+            <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Bedtime Glargine</span>
+          </div>
+        </div>
+      </div>
 
       <!-- Profile Banner with Mountain Image & Patient Details -->
       <header class="profile-banner-card" role="banner">
@@ -238,16 +313,16 @@
           <!-- Patient Profile Info -->
           <div class="patient-info-block">
             <div class="patient-avatar-box" id="patientAvatarDisplay" aria-hidden="true">
-              AP
+              AR
             </div>
             <div class="patient-details">
-              <h2 id="patientNameDisplay">Arthur Pendelton</h2>
+              <h2 id="patientNameDisplay">Ananya Rao</h2>
               <div class="patient-meta-list" id="patientMetaDisplay">
-                <span class="patient-meta-item"><strong>Age:</strong> 68</span>
+                <span class="patient-meta-item"><strong>Age:</strong> 42</span>
                 <span class="patient-meta-item">|</span>
                 <span class="patient-meta-item"><strong>Condition:</strong> Type 2 Diabetes</span>
                 <span class="patient-meta-item">|</span>
-                <span class="patient-meta-item"><strong>Device:</strong> PenSync Duo Pro #SN-8820</span>
+                <span class="patient-meta-item"><strong>Device:</strong> PenSync Duo Pro #SN-1001</span>
               </div>
             </div>
           </div>
@@ -377,47 +452,163 @@
         <!-- Right Side Tab Content Views -->
         <main class="dashboard-content-area">
 
-          <!-- TAB 1: LATEST BLOOD SUGAR (User instructed: keep as blank "") -->
+          <!-- TAB 1: LATEST BLOOD SUGAR -->
           <article id="tab-latest-glucose" class="tab-window-card active" role="tabpanel" aria-labelledby="tab-btn-latest-glucose">
             <header class="tab-window-header">
               <div>
                 <h3 class="tab-window-title">Latest Blood Sugar</h3>
-                <p class="tab-window-subhead">Continuous device stream & manual fingerstick readings</p>
+                <p class="tab-window-subhead">Verified glucose telemetry, meal context & rate of change</p>
               </div>
-              <span class="badge badge-info">Window Active</span>
+              <span class="badge badge-info" id="readingFreshnessBadge">Active Stream</span>
             </header>
 
-            <div class="designated-blank-state" aria-label="Designated blank container">
-              <div class="blank-icon-box" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                </svg>
+            <div class="panel-action-toolbar">
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button type="button" id="openAddGlucoseBtn" class="btn-primary">
+                  + Log Blood Sugar
+                </button>
+                <button type="button" id="toggleUnitBtn" class="btn-outline">
+                  Toggle mmol/L Unit
+                </button>
               </div>
-              <h3>Latest blood sugar</h3>
-              <p>Container ready for incoming glucose stream data.</p>
+              <span style="font-size:var(--font-size-sm); color:var(--color-text-muted);">
+                Sample Date: <strong>October 14, 2026</strong>
+              </span>
+            </div>
+
+            <!-- Latest Reading Hero Grid -->
+            <div class="latest-sugar-hero">
+              <div class="sugar-value-card status-target" id="sugarHeroCard">
+                <div class="sugar-hero-label">Most Recent Measurement</div>
+                <div class="sugar-hero-num-row">
+                  <span id="latestGlucoseNum" class="sugar-hero-num">124</span>
+                  <span id="latestGlucoseUnit" class="sugar-hero-unit">mg/dL</span>
+                </div>
+                <div id="latestGlucoseMeta" style="font-size:var(--font-size-sm); color:var(--color-text-muted); margin-bottom:0.6rem;">
+                  Measured: Oct 14, 2026, 1:00 PM • Manual Meter Entry
+                </div>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                  <span id="latestGlucoseContext" class="badge badge-info">Before Lunch</span>
+                  <span id="latestGlucoseTargetChip" class="badge badge-ok">In Target (70–140 mg/dL)</span>
+                  <span id="latestGlucoseTrend" class="sugar-trend-chip badge badge-info">→ Rate: 0.0 mg/dL/min</span>
+                </div>
+              </div>
+
+              <div class="sugar-value-card">
+                <div class="sugar-hero-label">Clinician Target Reference</div>
+                <div class="sugar-hero-num-row">
+                  <span class="sugar-hero-num" style="font-size: 38px;">70 – 140</span>
+                  <span class="sugar-hero-unit">mg/dL</span>
+                </div>
+                <p style="font-size:var(--font-size-sm); color:var(--color-text-muted); margin: 0.5rem 0;">
+                  Prescribed target range set by your healthcare team. Consistent time within this band supports glycemic stability and protects vascular health.
+                </p>
+                <span class="badge badge-ok">[CARE PLAN TARGET]</span>
+              </div>
+            </div>
+
+            <!-- Chronological Daily Readings Table -->
+            <div style="margin-top: 1.5rem;">
+              <h4 style="font-size: var(--font-size-lg); color: var(--color-primary); margin-bottom: 0.5rem;">
+                Recorded Daily Glucose Measurements
+              </h4>
+              <div class="medtech-table-wrapper">
+                <table class="medtech-table" aria-label="Chronological Glucose Measurements">
+                  <thead>
+                    <tr>
+                      <th scope="col">Time</th>
+                      <th scope="col">Measurement</th>
+                      <th scope="col">Meal Context</th>
+                      <th scope="col">Source</th>
+                      <th scope="col">Glycemic Zone [CALC-05]</th>
+                    </tr>
+                  </thead>
+                  <tbody id="glucoseHistoryTableBody">
+                    <!-- Populated dynamically by app.js -->
+                  </tbody>
+                </table>
+              </div>
             </div>
           </article>
 
-          <!-- TAB 2: INSULIN LOG (User instructed: keep as blank "") -->
+          <!-- TAB 2: INSULIN LOG -->
           <article id="tab-insulin-log" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-insulin-log">
             <header class="tab-window-header">
               <div>
                 <h3 class="tab-window-title">Insulin Log</h3>
                 <p class="tab-window-subhead">Digital pen injection history, basal units, and rapid bolus events</p>
               </div>
-              <span class="badge badge-info">Window Active</span>
+              <span class="badge badge-insulin">Pen Sync Verified</span>
             </header>
 
-            <div class="designated-blank-state" aria-label="Designated blank container">
-              <div class="blank-icon-box" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 2l4 4-10 10-4-4L18 2z"></path>
-                  <path d="M7 13l-4 4"></path>
-                  <path d="M3 17l4 4"></path>
-                </svg>
+            <div class="panel-action-toolbar">
+              <button type="button" id="openAddInsulinBtn" class="btn-primary" style="background:var(--color-insulin); border-color:var(--color-insulin);">
+                + Record Insulin Dose
+              </button>
+              <span style="font-size:var(--font-size-sm); color:var(--color-text-muted);">
+                PenSync Duo Pro #SN-8820
+              </span>
+            </div>
+
+            <!-- Daily Totals Summary Grid -->
+            <div class="insulin-totals-grid">
+              <div class="insulin-stat-box">
+                <div class="sugar-hero-label">Total Recorded Today</div>
+                <div id="dailyTotalInsulin" class="insulin-stat-num">20 U</div>
+                <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Total Units Administered</span>
               </div>
-              <h3>Insulin log</h3>
-              <p>Container ready for incoming insulin dose log entries.</p>
+
+              <div class="insulin-stat-box">
+                <div class="sugar-hero-label">Basal (Long-Acting)</div>
+                <div id="dailyBasalInsulin" class="insulin-stat-num" style="color:var(--color-primary);">14 U</div>
+                <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Target: 20 U/day [CALC-01]</span>
+              </div>
+
+              <div class="insulin-stat-box">
+                <div class="sugar-hero-label">Bolus (Mealtime)</div>
+                <div id="dailyBolusInsulin" class="insulin-stat-num" style="color:var(--color-accent);">6 U</div>
+                <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Pre-meal insulin active</span>
+              </div>
+
+              <div class="insulin-stat-box">
+                <div class="sugar-hero-label">Cartridge Left [CALC-08]</div>
+                <div id="cartridgeUnitsLeft" class="insulin-stat-num" style="color:var(--color-status-ok);">202 U</div>
+                <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">Remaining in 300U prefill</span>
+              </div>
+            </div>
+
+            <!-- Prescribed Treatment Regimen Reference -->
+            <div class="motto-banner-box" style="max-width:none; margin-bottom:1.5rem; border-left-color:var(--color-insulin);">
+              <div class="motto-heading" style="color:var(--color-insulin);">
+                CLINICIAN TREATMENT REGIMEN (READ-ONLY REFERENCE)
+              </div>
+              <p id="prescribedPlanText" style="margin:0.25rem 0 0.5rem 0; font-weight:600; color:var(--color-primary);">
+                Loading prescribed medication plan...
+              </p>
+              <p style="margin:0; font-size:var(--font-size-xs); color:var(--color-text-muted);">
+                ⚠️ <strong>Safety Guard:</strong> This log maintains a faithful historical record of administered doses. PenSync does NOT calculate compensation doses or automatically adjust medication.
+              </p>
+            </div>
+
+            <!-- Insulin Event Table -->
+            <h4 style="font-size: var(--font-size-lg); color: var(--color-primary); margin-bottom: 0.5rem;">
+              Administered Doses & Smart Pen Cap Events
+            </h4>
+            <div class="medtech-table-wrapper">
+              <table class="medtech-table" aria-label="Insulin Dose Event Log">
+                <thead>
+                  <tr>
+                    <th scope="col">Time Administered</th>
+                    <th scope="col">Insulin Medication</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">60s Priming Filter [CALC-06]</th>
+                  </tr>
+                </thead>
+                <tbody id="insulinHistoryTableBody">
+                  <!-- Populated dynamically by app.js -->
+                </tbody>
+              </table>
             </div>
           </article>
 
@@ -595,24 +786,78 @@
             </footer>
           </article>
 
-          <!-- TAB 5: SYNC STATUS (User instructed: keep as blank "") -->
+          <!-- TAB 5: SYNC STATUS -->
           <article id="tab-sync-status" class="tab-window-card" role="tabpanel" aria-labelledby="tab-btn-sync-status">
             <header class="tab-window-header">
               <div>
                 <h3 class="tab-window-title">Sync Status</h3>
-                <p class="tab-window-subhead">Bluetooth smart pen telemetry, pairing diagnostics, and packet verification</p>
+                <p class="tab-window-subhead">Smart pen telemetry, Bluetooth connectivity, and cloud synchronisation</p>
               </div>
-              <span class="badge badge-info">Window Active</span>
+              <span class="badge badge-ok" id="syncStatusBadge">Synchronized</span>
             </header>
 
-            <div class="designated-blank-state" aria-label="Designated blank container">
-              <div class="blank-icon-box" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="panel-action-toolbar">
+              <button type="button" id="triggerManualSyncBtn" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right: 0.4rem;" aria-hidden="true">
                   <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
                 </svg>
+                Sync Now
+              </button>
+              <span style="font-size:var(--font-size-sm); color:var(--color-text-muted);">
+                Simulated PenSync Telemetry Channel
+              </span>
+            </div>
+
+            <!-- Diagnostics Summary Grid -->
+            <div class="sync-diagnostic-grid">
+              <div class="diagnostic-card">
+                <div class="sugar-hero-label">Smart Pen Device</div>
+                <div id="syncDeviceStatus" style="font-size: 20px; font-weight: 700; color: var(--color-status-ok); margin: 0.25rem 0;">
+                  Connected & Paired
+                </div>
+                <span id="syncDeviceMeta" style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                  Model: PenSync Duo Pro • Battery: 94%
+                </span>
               </div>
-              <h3>Sync status</h3>
-              <p>Container ready for incoming device telemetry sync records.</p>
+
+              <div class="diagnostic-card">
+                <div class="sugar-hero-label">Cloud Telemetry Channel</div>
+                <div id="syncInternetStatus" style="font-size: 20px; font-weight: 700; color: var(--color-status-ok); margin: 0.25rem 0;">
+                  Online & Active
+                </div>
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                  Encrypted Local Storage + Cloud Bridge
+                </span>
+              </div>
+
+              <div class="diagnostic-card">
+                <div class="sugar-hero-label">Last Successful Sync</div>
+                <div id="syncLastSuccessTime" style="font-size: 20px; font-weight: 700; color: var(--color-primary); margin: 0.25rem 0;">
+                  Today at 1:00 PM
+                </div>
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                  Auto-sync on cap closure event
+                </span>
+              </div>
+
+              <div class="diagnostic-card">
+                <div class="sugar-hero-label">Pending Sync Queue</div>
+                <div id="syncPendingQueueCount" style="font-size: 20px; font-weight: 700; color: var(--color-primary); margin: 0.25rem 0;">
+                  0 Records
+                </div>
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                  All local injection packets committed
+                </span>
+              </div>
+            </div>
+
+            <div class="motto-banner-box" style="max-width:none; margin-top: 1.5rem; border-left-color: var(--color-accent);">
+              <div class="motto-heading" style="color: var(--color-accent);">
+                TELEMETRY & DEMO DISCLAIMER
+              </div>
+              <p style="margin: 0.25rem 0; font-size: var(--font-size-sm); color: var(--color-text-dark);">
+                PenSync uses a simulated continuous BLE connection with verified demonstration patient profiles. In a clinical production deployment, hardware pairing utilizes ISO/IEEE 11073-10417 Personal Health Device Standards.
+              </p>
             </div>
           </article>
 
@@ -621,6 +866,86 @@
 
     </div>
   </section>
+
+  <!-- Modal 1: Log Blood Sugar Reading -->
+  <div id="addGlucoseModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="addGlucoseModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="addGlucoseModalTitle" class="modal-title">Log Blood Sugar Reading</h3>
+        <button type="button" class="modal-close-btn" id="closeAddGlucoseModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="addGlucoseForm">
+        <div class="form-group">
+          <label for="glucoseValueInput">Blood Sugar Reading (mg/dL) *</label>
+          <input type="number" id="glucoseValueInput" min="20" max="600" step="1" required placeholder="e.g. 125" class="auth-input" style="font-size: 20px; font-weight: 700;">
+          <small style="color: var(--color-text-muted);">Normal Target Range: 70 – 140 mg/dL</small>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="glucoseContextInput">Meal Context *</label>
+          <select id="glucoseContextInput" class="auth-input" required>
+            <option value="Before Breakfast">Before Breakfast (Fasting)</option>
+            <option value="After Breakfast">After Breakfast (Post-Prandial)</option>
+            <option value="Before Lunch" selected>Before Lunch</option>
+            <option value="After Lunch">After Lunch</option>
+            <option value="Before Dinner">Before Dinner</option>
+            <option value="After Dinner">After Dinner</option>
+            <option value="Bedtime">Bedtime</option>
+            <option value="Night / Random">Night / Random</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="glucoseSourceInput">Measurement Source</label>
+          <select id="glucoseSourceInput" class="auth-input">
+            <option value="Manual Meter Entry" selected>Manual Meter (Fingerstick)</option>
+            <option value="Continuous Glucose Stream">Continuous Glucose Stream (CGM)</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
+          <button type="button" class="btn-outline" id="cancelAddGlucoseBtn">Cancel</button>
+          <button type="submit" class="btn-primary">Save Measurement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Record Insulin Dose -->
+  <div id="addInsulinModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="addInsulinModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="addInsulinModalTitle" class="modal-title">Record Insulin Injection</h3>
+        <button type="button" class="modal-close-btn" id="closeAddInsulinModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="addInsulinForm">
+        <div class="form-group">
+          <label for="insulinUnitsInput">Dose Amount (Units) *</label>
+          <input type="number" id="insulinUnitsInput" min="1" max="80" step="0.5" required placeholder="e.g. 6" class="auth-input" style="font-size: 20px; font-weight: 700;">
+          <small style="color: var(--color-text-muted);">Enter exact administered units recorded by smart pen</small>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="insulinTypeInput">Medication / Insulin Type *</label>
+          <select id="insulinTypeInput" class="auth-input" required>
+            <option value="Rapid-Acting (Humalog / Lispro)" selected>Rapid-Acting Bolus (Humalog / Lispro)</option>
+            <option value="Rapid-Acting (Novolog / Aspart)">Rapid-Acting Bolus (Novolog / Aspart)</option>
+            <option value="Long-Acting (Lantus / Glargine)">Long-Acting Basal (Lantus / Glargine)</option>
+            <option value="Ultra-Long Acting (Tresiba / Degludec)">Ultra-Long Acting Basal (Tresiba / Degludec)</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="insulinNotesInput">Notes / Injection Site</label>
+          <select id="insulinNotesInput" class="auth-input">
+            <option value="Abdomen (Left)" selected>Abdomen (Left)</option>
+            <option value="Abdomen (Right)">Abdomen (Right)</option>
+            <option value="Thigh (Upper Outer)">Thigh (Upper Outer)</option>
+            <option value="Arm (Posterior)">Arm (Posterior)</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
+          <button type="button" class="btn-outline" id="cancelAddInsulinBtn">Cancel</button>
+          <button type="submit" class="btn-primary" style="background:var(--color-insulin); border-color:var(--color-insulin);">Record Dose</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Global Feedback Toast Notification -->
   <aside id="toastBanner" class="toast-banner" role="status" aria-live="polite">

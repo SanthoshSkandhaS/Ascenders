@@ -1257,6 +1257,315 @@ select:focus {
   border-left: 6px solid var(--color-status-urgent);
 }
 
+/* ==========================================================================
+   PANEL ENHANCEMENTS: LATEST BLOOD SUGAR, INSULIN LOG, SYNC STATUS, DOCTOR PORTAL
+   ========================================================================== */
+
+/* Latest Blood Sugar Hero Card */
+.latest-sugar-hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.sugar-value-card {
+  background: linear-gradient(145deg, #FFFFFF, var(--color-bg-main));
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.sugar-value-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background-color: var(--color-accent);
+}
+
+.sugar-value-card.status-high::before { background-color: var(--color-status-urgent); }
+.sugar-value-card.status-low::before { background-color: var(--color-status-urgent); }
+.sugar-value-card.status-target::before { background-color: var(--color-status-ok); }
+
+.sugar-hero-label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.sugar-hero-num-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.sugar-hero-num {
+  font-size: 52px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.sugar-hero-unit {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.sugar-trend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+/* History table */
+.medtech-table-wrapper {
+  overflow-x: auto;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  margin-top: 1rem;
+}
+
+.medtech-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--font-size-sm);
+}
+
+.medtech-table th {
+  background-color: var(--color-bg-main);
+  color: var(--color-primary);
+  font-weight: 700;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.medtech-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-main);
+}
+
+.medtech-table tr:last-child td {
+  border-bottom: none;
+}
+
+.medtech-table tr:hover {
+  background-color: #FAFBFD;
+}
+
+/* Action Toolbar */
+.panel-action-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* Insulin Log Cards */
+.insulin-totals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.insulin-stat-box {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.insulin-stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-insulin);
+  margin-top: 0.35rem;
+}
+
+/* Sync Status Grid */
+.sync-diagnostic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.sync-card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.sync-card-status {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(22, 50, 79, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-dialog {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-elevated);
+  padding: 2rem;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.modal-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+/* Clinician / Doctor Portal Styles */
+.doctor-portal-banner {
+  background: linear-gradient(135deg, #10253B, #16324F);
+  color: #FFFFFF;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-card);
+}
+
+.doctor-select-label {
+  font-size: var(--font-size-sm);
+  color: #D5DEE5;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.doctor-patient-picker {
+  background: #FFFFFF;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-accent);
+  cursor: pointer;
+  min-width: 260px;
+}
+
+.doctor-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.doctor-kpi-card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.doctor-kpi-card .kpi-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.doctor-kpi-card .kpi-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0.25rem 0;
+}
+
+.crossref-alert-box {
+  background: #FFFDF9;
+  border: 2px solid var(--color-status-warning);
+  border-left: 6px solid var(--color-status-warning);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.crossref-alert-box.hazard {
+  background: #FEF6F5;
+  border-color: var(--color-status-urgent);
+}
+
 /* High contrast print styles for clinical export */
 @media print {
   body {
