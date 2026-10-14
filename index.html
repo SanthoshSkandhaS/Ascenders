@@ -92,10 +92,10 @@
 
         <!-- Quick Demo Account Helper -->
         <div class="demo-account-box" aria-label="Demo Testing Accounts">
-          <h4>Demo Accounts (Click to test):</h4>
+          <h4>Demo Accounts (Click or select to test):</h4>
           <div class="demo-btn-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
             <button type="button" class="demo-chip demo-fill-btn" data-username="gc1001" data-password="pensync123" title="Ananya Rao - Type 2 Diabetes">
-              <strong>Ananya Rao (GC1001)</strong> — Type 2 Diabetes
+              <strong>Ananya Rao (GC1001)</strong> — In-Target Control (124 mg/dL)
             </button>
             <button type="button" class="demo-chip demo-fill-btn" data-username="gc1002" data-password="pensync123" title="Ravi Kumar - Demo High Alert">
               <strong>Ravi Kumar (GC1002)</strong> — High Alert Scenario (236 mg/dL)
@@ -104,8 +104,32 @@
               <strong>Meera Nair (GC1003)</strong> — Type 1 CGM Low Alert (68 mg/dL)
             </button>
             <button type="button" class="demo-chip demo-fill-btn" data-username="dr.thorne" data-password="clinical123" style="background:#16324F; color:#FFFFFF; border-color:#087E8B;" title="Dr. Aris Thorne - Clinician Portal">
-              🩺 <strong>Dr. Aris Thorne, MD</strong> — Clinician Telemetry Portal
+              🩺 <strong>Dr. Aris Thorne, MD</strong> — Clinician Triage Portal
             </button>
+
+            <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--color-border);">
+              <label for="allDemoPatientsSelect" style="font-size: var(--font-size-xs); font-weight: 700; color: var(--color-primary); display: block; margin-bottom: 0.25rem;">
+                Select from all 15 Patient Profiles:
+              </label>
+              <select id="allDemoPatientsSelect" class="auth-input" style="padding: 0.4rem 0.6rem; font-size: var(--font-size-sm); cursor: pointer;">
+                <option value="" disabled selected>-- Choose any patient profile to auto-fill --</option>
+                <option value="gc1001">GC1001 - Ananya Rao (T2D, 124 mg/dL)</option>
+                <option value="gc1002">GC1002 - Ravi Kumar (T2D, 236 mg/dL - High Alert)</option>
+                <option value="gc1003">GC1003 - Meera Nair (T1D, 68 mg/dL - Low Alert)</option>
+                <option value="gc1005">GC1005 - Neha Sharma (T2D, 126 mg/dL)</option>
+                <option value="gc1006">GC1006 - Arjun Patel (T2D, 218 mg/dL - High Alert)</option>
+                <option value="gc1007">GC1007 - Priya Menon (T1D, 66 mg/dL - Low Alert)</option>
+                <option value="gc1008">GC1008 - Vikram Singh (T2D, 169 mg/dL - Elevated)</option>
+                <option value="gc1009">GC1009 - Kavya Iyer (T2D, 142 mg/dL - Elevated)</option>
+                <option value="gc1010">GC1010 - Rahul Das (T1D, 103 mg/dL)</option>
+                <option value="gc1011">GC1011 - Meenakshi Rao (T2D, 196 mg/dL - High Alert)</option>
+                <option value="gc1012">GC1012 - Imran Khan (T1D, 84 mg/dL - Prior Low Event)</option>
+                <option value="gc1013">GC1013 - Divya Reddy (T2D, 161 mg/dL - Elevated)</option>
+                <option value="gc1014">GC1014 - Sanjay Kumar (T2D, 242 mg/dL - High Alert)</option>
+                <option value="gc1015">GC1015 - Aisha Thomas (T1D, 114 mg/dL)</option>
+                <option value="gc1016">GC1016 - Manoj Verma (T2D, 116 mg/dL - Prior Low Event)</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -257,9 +281,21 @@
           <div>
             <label for="doctorPatientSelect" class="doctor-select-label">Select Patient Case Record:</label>
             <select id="doctorPatientSelect" class="doctor-patient-picker">
-              <option value="gc1001">Ananya Rao (GC1001) - T2D / Target Review</option>
-              <option value="gc1002">Ravi Kumar (GC1002) - T2D / Demo High Alert</option>
-              <option value="gc1003">Meera Nair (GC1003) - T1D / Demo Low Alert</option>
+              <option value="gc1001">GC1001 - Ananya Rao (T2D, 124 mg/dL)</option>
+              <option value="gc1002">GC1002 - Ravi Kumar (T2D, 236 mg/dL)</option>
+              <option value="gc1003">GC1003 - Meera Nair (T1D, 68 mg/dL)</option>
+              <option value="gc1005">GC1005 - Neha Sharma (T2D, 126 mg/dL)</option>
+              <option value="gc1006">GC1006 - Arjun Patel (T2D, 218 mg/dL)</option>
+              <option value="gc1007">GC1007 - Priya Menon (T1D, 66 mg/dL)</option>
+              <option value="gc1008">GC1008 - Vikram Singh (T2D, 169 mg/dL)</option>
+              <option value="gc1009">GC1009 - Kavya Iyer (T2D, 142 mg/dL)</option>
+              <option value="gc1010">GC1010 - Rahul Das (T1D, 103 mg/dL)</option>
+              <option value="gc1011">GC1011 - Meenakshi Rao (T2D, 196 mg/dL)</option>
+              <option value="gc1012">GC1012 - Imran Khan (T1D, 84 mg/dL)</option>
+              <option value="gc1013">GC1013 - Divya Reddy (T2D, 161 mg/dL)</option>
+              <option value="gc1014">GC1014 - Sanjay Kumar (T2D, 242 mg/dL)</option>
+              <option value="gc1015">GC1015 - Aisha Thomas (T1D, 114 mg/dL)</option>
+              <option value="gc1016">GC1016 - Manoj Verma (T2D, 116 mg/dL)</option>
             </select>
           </div>
           <button type="button" id="exitDoctorPortalBtn" class="btn-outline" style="border-color:#FFFFFF; color:#FFFFFF;">
@@ -302,6 +338,73 @@
           </div>
         </div>
       </div>
+
+      <!-- Clinician Triage & ML Prioritization Queue (Visible in Clinician View) -->
+      <section id="clinicalTriageSection" class="triage-queue-card" style="display: none;" aria-label="Clinical Triage and Patient Review Prioritization">
+        <div class="triage-header-row">
+          <div class="triage-title-group">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#087E8B" stroke-width="2.3" aria-hidden="true">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              Clinician Patient Review Queue (15 Patients)
+            </h3>
+            <p>Patients ordered by Layer A Safety Tier (Non-negotiable clinical flags) + Layer B Trained ML Review Priority Model</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="badge badge-info" style="font-weight:700;">Model: v1.2-calibrated-logreg</span>
+            <span class="badge badge-ok">Accuracy: 99.2%</span>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="triage-filter-bar" role="toolbar" aria-label="Triage Queue Filters">
+          <button type="button" class="triage-filter-btn active" data-filter="all" id="filterBtnAll">
+            All Patients <span class="triage-filter-badge" id="countFilterAll">15</span>
+          </button>
+          <button type="button" class="triage-filter-btn" data-filter="critical" id="filterBtnCritical">
+            🚨 Critical Flags <span class="triage-filter-badge" id="countFilterCritical">5</span>
+          </button>
+          <button type="button" class="triage-filter-btn" data-filter="elevated" id="filterBtnElevated">
+            ⚠️ Elevated Risk <span class="triage-filter-badge" id="countFilterElevated">6</span>
+          </button>
+          <button type="button" class="triage-filter-btn" data-filter="hypo" id="filterBtnHypo">
+            📉 Hypo Risk / History <span class="triage-filter-badge" id="countFilterHypo">4</span>
+          </button>
+          <button type="button" class="triage-filter-btn" data-filter="stable" id="filterBtnStable">
+            ✓ In-Target Control <span class="triage-filter-badge" id="countFilterStable">4</span>
+          </button>
+        </div>
+
+        <!-- Triage Queue Table -->
+        <div class="medtech-table-wrapper" style="max-height: 520px; overflow-y: auto;">
+          <table class="triage-table" aria-label="Patient Review Priority Queue">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 55px;">Rank</th>
+                <th scope="col">Patient Details</th>
+                <th scope="col">Latest Reading</th>
+                <th scope="col">Layer A Safety Flag</th>
+                <th scope="col">Layer B ML Priority</th>
+                <th scope="col">Clinical Triage Rationale</th>
+                <th scope="col" style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="triageTableBody">
+              <!-- Populated dynamically by app.js using PenSyncPrioritization -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="safety-notice-banner">
+          ⚖️ <strong>Clinical Safety Disclosure:</strong> This prioritization ranking assists clinical workflow by organizing records for expedited review. The experimental ML model operates on calibrated synthetic clinical vectors and does NOT formulate autonomous medical diagnoses or replace physician judgment.
+        </div>
+      </section>
 
       <!-- Profile Banner with Mountain Image & Patient Details -->
       <header class="profile-banner-card" role="banner">
@@ -952,6 +1055,7 @@
     <div id="toastMessage" style="font-size: 16px; font-weight: 600;">Welcome to Pensync</div>
   </aside>
 
+  <script src="ml_prioritization.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

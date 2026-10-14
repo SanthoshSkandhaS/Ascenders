@@ -1,0 +1,62 @@
+{
+  "version": "v1.2-calibrated-logreg",
+  "trainedDate": "2026-10-14T10:13:52.804Z",
+  "architecture": "Regularized Logistic Regression (Browser-side inference)",
+  "featureNames": [
+    "latest_glucose",
+    "target_distance",
+    "is_hypo_acute",
+    "is_severe_hyper",
+    "has_prior_hypo",
+    "daily_range",
+    "type1_risk",
+    "age_vulnerability"
+  ],
+  "means": [
+    137.535,
+    35.7554,
+    0.25,
+    0.25,
+    0.3717,
+    55.8267,
+    0.5167,
+    0.4958
+  ],
+  "stds": [
+    69.794,
+    41.9287,
+    0.433,
+    0.433,
+    0.4832,
+    22.1259,
+    0.4997,
+    0.5
+  ],
+  "weights": [
+    0.3941,
+    0.9931,
+    0.7385,
+    0.7073,
+    1.3696,
+    0.6877,
+    0.0289,
+    -0.0379
+  ],
+  "bias": 1.1971,
+  "evaluationMetrics": {
+    "testSampleSize": 240,
+    "trainingSampleSize": 960,
+    "accuracy": 0.9917,
+    "precision": 1,
+    "recall": 0.9877,
+    "f1Score": 0.9938,
+    "confusionMatrix": {
+      "tp": 161,
+      "fp": 0,
+      "tn": 77,
+      "fn": 2
+    },
+    "modelVersion": "v1.2-calibrated-logreg",
+    "trainingMethod": "L2-Regularized Logistic Regression on Calibrated Synthetic Clinical Trajectories"
+  }
+}
