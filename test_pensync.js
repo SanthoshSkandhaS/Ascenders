@@ -298,6 +298,15 @@ designTokens.forEach(token => {
   assert(`Token: ${token.name}`, token.test);
 });
 
+// 8. DEVICE STATUS & CLINICIAN ISOLATION VERIFICATION
+console.log("\n--- 8. Device Status & Clinician Account Verification ---");
+assert("No fabricated 'Connected & Paired' status in HTML", !html.includes("Connected & Paired"));
+assert("No fabricated 'Stream: Connected' status in HTML", !html.includes("Stream: Connected"));
+assert("Device status shows 'Device integration pending'", html.includes("Device integration pending"));
+assert("Doctor Thorne account does not have personal penId", !DEFAULT_PATIENTS["dr.thorne"].penId);
+assert("Doctor Patient selector has clinical urgency label", html.includes("Ordered by Clinical Urgency"));
+assert("Doctor Patient dropdown first option is Critical alert (not serial order GC1001)", html.includes('<option value="gc1007">🚨 [CRITICAL] Priya Menon'));
+
 // SUMMARY
 console.log("\n======================================================================");
 console.log(`TEST SUMMARY: ${passedTests} / ${totalTests} checks passed (${Math.round((passedTests / totalTests) * 100)}%)`);
