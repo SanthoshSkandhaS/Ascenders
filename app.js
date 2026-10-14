@@ -848,7 +848,6 @@ const DEFAULT_PATIENTS = {
     name: "Dr. Aris Thorne, MD",
     age: 48,
     type: "Lead Endocrinologist & Diabetologist",
-    penId: "Clinical Oversight Station #DOC-01",
     recoveryId: "DOC-9999",
     password: "clinical123",
     avatarInitial: "DT",
@@ -948,6 +947,9 @@ class PenSyncApp {
     this.countFilterStable = document.getElementById("countFilterStable");
 
     // Dashboard Header Elements
+    this.topbarDeviceBadge = document.getElementById("topbarDeviceBadge");
+    this.topbarDeviceText = document.getElementById("topbarDeviceText");
+    this.topbarDeviceDot = document.getElementById("topbarDeviceDot");
     this.patientNameDisplay = document.getElementById("patientNameDisplay");
     this.patientMetaDisplay = document.getElementById("patientMetaDisplay");
     this.patientAvatarDisplay = document.getElementById("patientAvatarDisplay");
@@ -1431,19 +1433,44 @@ class PenSyncApp {
     if (!this.currentPatient) return;
     const p = this.currentPatient;
 
+    // Topbar device status indicator: remove from clinician account, show pending for patients
+    if (this.topbarDeviceBadge) {
+      if (this.isClinicianMode || p.isClinician) {
+        this.topbarDeviceBadge.style.display = "none";
+      } else {
+        this.topbarDeviceBadge.style.display = "inline-flex";
+        if (this.topbarDeviceText) this.topbarDeviceText.textContent = "Device integration pending";
+        if (this.topbarDeviceDot) {
+          this.topbarDeviceDot.style.backgroundColor = "#9A5B00";
+          this.topbarDeviceDot.style.boxShadow = "0 0 6px #9A5B00";
+        }
+      }
+    }
+
     // Header Profile info
     if (this.patientNameDisplay) this.patientNameDisplay.textContent = p.name;
     if (this.patientAvatarDisplay) this.patientAvatarDisplay.textContent = p.avatarInitial;
     if (this.patientMetaDisplay) {
-      this.patientMetaDisplay.innerHTML = `
-        <span class="patient-meta-item"><strong>Patient ID:</strong> ${p.id}</span>
-        <span class="patient-meta-item">|</span>
-        <span class="patient-meta-item"><strong>Age:</strong> ${p.age}</span>
-        <span class="patient-meta-item">|</span>
-        <span class="patient-meta-item"><strong>Condition:</strong> ${p.type}</span>
-        <span class="patient-meta-item">|</span>
-        <span class="patient-meta-item"><strong>Device:</strong> ${p.penId}</span>
-      `;
+      if (p.isClinician) {
+        // Clinician Account: Remove personal device-connection indicators
+        this.patientMetaDisplay.innerHTML = `
+          <span class="patient-meta-item"><strong>Staff ID:</strong> ${p.id}</span>
+          <span class="patient-meta-item">|</span>
+          <span class="patient-meta-item"><strong>Role:</strong> ${p.type}</span>
+          <span class="patient-meta-item">|</span>
+          <span class="patient-meta-item"><strong>Access:</strong> Multi-Patient Clinical Oversight</span>
+        `;
+      } else {
+        this.patientMetaDisplay.innerHTML = `
+          <span class="patient-meta-item"><strong>Patient ID:</strong> ${p.id}</span>
+          <span class="patient-meta-item">|</span>
+          <span class="patient-meta-item"><strong>Age:</strong> ${p.age}</span>
+          <span class="patient-meta-item">|</span>
+          <span class="patient-meta-item"><strong>Condition:</strong> ${p.type}</span>
+          <span class="patient-meta-item">|</span>
+          <span class="patient-meta-item"><strong>Device:</strong> ${p.penId} (Integration Pending)</span>
+        `;
+      }
     }
 
     // Render individual components
@@ -1468,8 +1495,11 @@ class PenSyncApp {
         this.togglePortalModeBtn.style.background = "#087E8B";
       }
 
+      // Populate doctor selector dropdown ordered by transparent clinical urgency
+      this.populateDoctorPatientSelect();
+
       // Sync selector dropdown with active patient
-      if (this.doctorPatientSelect && this.currentPatient) {
+      if (this.doctorPatientSelect && this.currentPatient && !this.currentPatient.isClinician) {
         this.doctorPatientSelect.value = this.currentPatient.username;
       }
 
@@ -1555,6 +1585,98 @@ class PenSyncApp {
         this.togglePortalModeBtn.textContent = "🩺 Clinician View";
         this.togglePortalModeBtn.style.background = "rgba(8,126,139,0.3)";
       }
+    }
+  }
+
+  populateDoctorPatientSelect() {
+    if (!this.doctorPatientSelect) return;
+
+    // Filter out clinician / doctor accounts
+    const patientList = Object.values(this.patients).filter(
+      p => p && !p.isDoctor && !p.isClinician && p.id !== "DR-THORNE"
+    );
+
+    // Compute transparent clinical urgency tier for every patient:
+    // Tier 1 (Critical): Hypo < 70 mg/dL or Hyper >= 200 mg/dL
+    // Tier 2 (Elevated): 141 - 199 mg/dL OR documented prior hypo event (< 70 mg/dL today)
+    // Tier 3 (In-Target): 70 - 140 mg/dL
+    // Tier 4 (Missing/Stale): No readings recorded or data stale
+    const prioritized = patientList.map(p => {
+      const readings = p.glucoseReadings || [];
+      const hasReadings = readings.length > 0;
+      const latest = hasReadings ? readings[readings.length - 1] : null;
+      const latestVal = latest ? Number(latest.value) : null;
+      const hasPriorHypo = hasReadings && readings.some((r, idx) => idx < readings.length - 1 && Number(r.value) < 70);
+
+      let urgencyTier = 3;
+      let badge = "✓ [IN TARGET]";
+      let urgencyDesc = "In-Target";
+
+      if (!hasReadings || latestVal === null || isNaN(latestVal)) {
+        urgencyTier = 4;
+        badge = "⚪ [NO DATA]";
+        urgencyDesc = "Missing Readings / Telemetry Pending";
+      } else if (latestVal < 70) {
+        urgencyTier = 1;
+        badge = "🚨 [CRITICAL]";
+        urgencyDesc = latestVal < 54 ? `Severe Hypoglycemia (${latestVal} mg/dL)` : `Acute Hypoglycemia (${latestVal} mg/dL)`;
+      } else if (latestVal >= 200) {
+        urgencyTier = 1;
+        badge = "🚨 [CRITICAL]";
+        urgencyDesc = `Severe Hyperglycemia (${latestVal} mg/dL)`;
+      } else if (latestVal > 140) {
+        urgencyTier = 2;
+        badge = "⚠️ [ELEVATED]";
+        urgencyDesc = `Elevated Glucose (${latestVal} mg/dL)`;
+      } else if (hasPriorHypo) {
+        urgencyTier = 2;
+        badge = "⚠️ [ELEVATED]";
+        const priorHypo = readings.find((r, idx) => idx < readings.length - 1 && Number(r.value) < 70);
+        urgencyDesc = `Prior Hypo Dip (${priorHypo ? priorHypo.value : 68} mg/dL) • Latest: ${latestVal} mg/dL`;
+      } else {
+        urgencyTier = 3;
+        badge = "✓ [IN TARGET]";
+        urgencyDesc = `In-Target (${latestVal} mg/dL)`;
+      }
+
+      return {
+        patient: p,
+        urgencyTier,
+        badge,
+        urgencyDesc,
+        latestVal: latestVal || 0
+      };
+    });
+
+    // Multi-key deterministic sort by clinical urgency
+    prioritized.sort((a, b) => {
+      // 1. Urgency Tier: 1 (Critical) < 2 (Elevated) < 3 (In-target) < 4 (Missing/Stale)
+      if (a.urgencyTier !== b.urgencyTier) {
+        return a.urgencyTier - b.urgencyTier;
+      }
+      // 2. Clinical deviation magnitude within tier
+      const aDev = a.latestVal < 70 ? (70 - a.latestVal) * 3 : Math.max(0, a.latestVal - 140);
+      const bDev = b.latestVal < 70 ? (70 - b.latestVal) * 3 : Math.max(0, b.latestVal - 140);
+      if (bDev !== aDev) return bDev - aDev;
+
+      // 3. Deterministic ID tie-breaker
+      return a.patient.id.localeCompare(b.patient.id);
+    });
+
+    const activeUser = this.currentPatient ? this.currentPatient.username : "";
+    this.doctorPatientSelect.innerHTML = "";
+
+    prioritized.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item.patient.username;
+      opt.textContent = `${item.badge} ${item.patient.name} (${item.patient.id}) — ${item.urgencyDesc}`;
+      this.doctorPatientSelect.appendChild(opt);
+    });
+
+    if (activeUser && this.patients[activeUser] && !this.patients[activeUser].isClinician) {
+      this.doctorPatientSelect.value = activeUser;
+    } else if (prioritized.length > 0) {
+      this.doctorPatientSelect.value = prioritized[0].patient.username;
     }
   }
 
@@ -1832,11 +1954,14 @@ class PenSyncApp {
     const p = this.currentPatient;
     if (!p) return;
 
-    if (this.syncDeviceStatus) this.syncDeviceStatus.textContent = "Connected & Paired";
+    if (this.syncDeviceStatus) {
+      this.syncDeviceStatus.textContent = "Device integration pending";
+      this.syncDeviceStatus.style.color = "var(--color-attention)";
+    }
     if (this.syncInternetStatus) this.syncInternetStatus.textContent = "Online & Synchronized";
     if (this.syncPendingQueueCount) this.syncPendingQueueCount.textContent = "0 Records Pending";
     if (this.syncStatusBadge) {
-      this.syncStatusBadge.textContent = "Synchronized";
+      this.syncStatusBadge.textContent = "Telemetry Local";
       this.syncStatusBadge.className = "badge badge-ok";
     }
   }

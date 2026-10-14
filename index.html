@@ -251,10 +251,10 @@
           <span>Pensync</span>
         </div>
 
-        <!-- Telemetry Status Distinction (Rule: clearly distinguish simulated from manual) -->
-        <div class="device-stream-badge" title="Active continuous connection to smart insulin pen">
-          <span class="stream-pulse-dot" aria-hidden="true"></span>
-          <span>Simulated PenSync Device Stream: Connected</span>
+        <!-- Hardware Telemetry Status (BLE integration pending) -->
+        <div class="device-stream-badge" id="topbarDeviceBadge" title="Hardware connection status: BLE integration pending">
+          <span class="stream-pulse-dot" id="topbarDeviceDot" style="background: #9A5B00; box-shadow: 0 0 6px #9A5B00;" aria-hidden="true"></span>
+          <span id="topbarDeviceText">Device integration pending</span>
         </div>
 
         <div class="topbar-user-menu">
@@ -279,23 +279,24 @@
 
         <div style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
           <div>
-            <label for="doctorPatientSelect" class="doctor-select-label">Select Patient Case Record:</label>
-            <select id="doctorPatientSelect" class="doctor-patient-picker">
-              <option value="gc1001">GC1001 - Ananya Rao (T2D, 124 mg/dL)</option>
-              <option value="gc1002">GC1002 - Ravi Kumar (T2D, 236 mg/dL)</option>
-              <option value="gc1003">GC1003 - Meera Nair (T1D, 68 mg/dL)</option>
-              <option value="gc1005">GC1005 - Neha Sharma (T2D, 126 mg/dL)</option>
-              <option value="gc1006">GC1006 - Arjun Patel (T2D, 218 mg/dL)</option>
-              <option value="gc1007">GC1007 - Priya Menon (T1D, 66 mg/dL)</option>
-              <option value="gc1008">GC1008 - Vikram Singh (T2D, 169 mg/dL)</option>
-              <option value="gc1009">GC1009 - Kavya Iyer (T2D, 142 mg/dL)</option>
-              <option value="gc1010">GC1010 - Rahul Das (T1D, 103 mg/dL)</option>
-              <option value="gc1011">GC1011 - Meenakshi Rao (T2D, 196 mg/dL)</option>
-              <option value="gc1012">GC1012 - Imran Khan (T1D, 84 mg/dL)</option>
-              <option value="gc1013">GC1013 - Divya Reddy (T2D, 161 mg/dL)</option>
-              <option value="gc1014">GC1014 - Sanjay Kumar (T2D, 242 mg/dL)</option>
-              <option value="gc1015">GC1015 - Aisha Thomas (T1D, 114 mg/dL)</option>
-              <option value="gc1016">GC1016 - Manoj Verma (T2D, 116 mg/dL)</option>
+            <label for="doctorPatientSelect" class="doctor-select-label">Select Patient Case (Ordered by Clinical Urgency):</label>
+            <select id="doctorPatientSelect" class="doctor-patient-picker" aria-label="Select Patient Case ordered by clinical urgency">
+              <!-- Dynamically populated in transparent clinical urgency order by app.js -->
+              <option value="gc1007">🚨 [CRITICAL] Priya Menon (GC1007) — Acute Hypoglycemia (66 mg/dL)</option>
+              <option value="gc1003">🚨 [CRITICAL] Meera Nair (GC1003) — Acute Hypoglycemia (68 mg/dL)</option>
+              <option value="gc1014">🚨 [CRITICAL] Sanjay Kumar (GC1014) — Severe Hyperglycemia (242 mg/dL)</option>
+              <option value="gc1002">🚨 [CRITICAL] Ravi Kumar (GC1002) — Severe Hyperglycemia (236 mg/dL)</option>
+              <option value="gc1006">🚨 [CRITICAL] Arjun Patel (GC1006) — Severe Hyperglycemia (218 mg/dL)</option>
+              <option value="gc1011">⚠️ [ELEVATED] Meenakshi Rao (GC1011) — High Pattern (196 mg/dL)</option>
+              <option value="gc1008">⚠️ [ELEVATED] Vikram Singh (GC1008) — Elevated (169 mg/dL)</option>
+              <option value="gc1013">⚠️ [ELEVATED] Divya Reddy (GC1013) — Elevated Trend (161 mg/dL)</option>
+              <option value="gc1009">⚠️ [ELEVATED] Kavya Iyer (GC1009) — Marginal High (142 mg/dL)</option>
+              <option value="gc1012">⚠️ [ELEVATED] Imran Khan (GC1012) — Prior Hypo: 68 mg/dL • Latest: 84 mg/dL</option>
+              <option value="gc1016">⚠️ [ELEVATED] Manoj Verma (GC1016) — Prior Hypo: 69 mg/dL • Latest: 116 mg/dL</option>
+              <option value="gc1005">✓ [IN TARGET] Neha Sharma (GC1005) — In-Target (126 mg/dL)</option>
+              <option value="gc1001">✓ [IN TARGET] Ananya Rao (GC1001) — In-Target (124 mg/dL)</option>
+              <option value="gc1015">✓ [IN TARGET] Aisha Thomas (GC1015) — In-Target (114 mg/dL)</option>
+              <option value="gc1010">✓ [IN TARGET] Rahul Das (GC1010) — In-Target (103 mg/dL)</option>
             </select>
           </div>
           <button type="button" id="exitDoctorPortalBtn" class="btn-outline" style="border-color:#FFFFFF; color:#FFFFFF;">
@@ -915,11 +916,11 @@
             <div class="sync-diagnostic-grid">
               <div class="diagnostic-card">
                 <div class="sugar-hero-label">Smart Pen Device</div>
-                <div id="syncDeviceStatus" style="font-size: 20px; font-weight: 700; color: var(--color-status-ok); margin: 0.25rem 0;">
-                  Connected & Paired
+                <div id="syncDeviceStatus" style="font-size: 20px; font-weight: 700; color: var(--color-attention); margin: 0.25rem 0;">
+                  Device integration pending
                 </div>
                 <span id="syncDeviceMeta" style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
-                  Model: PenSync Duo Pro • Battery: 94%
+                  Bluetooth Low Energy (BLE) not implemented • Direct meter log
                 </span>
               </div>
 
@@ -939,7 +940,7 @@
                   Today at 1:00 PM
                 </div>
                 <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
-                  Auto-sync on cap closure event
+                  Auto-sync on record entry event
                 </span>
               </div>
 
@@ -956,10 +957,10 @@
 
             <div class="motto-banner-box" style="max-width:none; margin-top: 1.5rem; border-left-color: var(--color-accent);">
               <div class="motto-heading" style="color: var(--color-accent);">
-                TELEMETRY & DEMO DISCLAIMER
+                HARDWARE INTEGRATION & TELEMETRY NOTICE
               </div>
               <p style="margin: 0.25rem 0; font-size: var(--font-size-sm); color: var(--color-text-dark);">
-                PenSync uses a simulated continuous BLE connection with verified demonstration patient profiles. In a clinical production deployment, hardware pairing utilizes ISO/IEEE 11073-10417 Personal Health Device Standards.
+                Notice: Hardware Bluetooth Low Energy (BLE) connectivity is not implemented. Patient glucose values and insulin dose history are currently captured via manual meter entries and authorized demo records. No active wireless hardware pairing is claimed.
               </p>
             </div>
           </article>
